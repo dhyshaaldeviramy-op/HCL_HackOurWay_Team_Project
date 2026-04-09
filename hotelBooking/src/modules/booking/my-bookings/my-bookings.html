@@ -1,0 +1,24 @@
+<h2>My Bookings</h2>
+
+<div *ngIf="bookings.length === 0">
+  <p>No bookings found</p>
+</div>
+
+<div *ngFor="let booking of bookings" class="card">
+
+  <h4>Booking ID: {{ booking.id }}</h4>
+
+  <p>Room ID: {{ booking.roomId }}</p>
+  <p>Check-In: {{ booking.checkIn | date }}</p>
+  <p>Check-Out: {{ booking.checkOut | date }}</p>
+  <p>Total Price: ₹{{ booking.totalPrice }}</p>
+  <p>Status: {{ booking.status }}</p>
+
+  <button 
+    (click)="cancelBooking(booking.id)" 
+    *ngIf="booking.status !== 'Cancelled'">
+    
+    Cancel Booking
+  </button>
+
+</div>

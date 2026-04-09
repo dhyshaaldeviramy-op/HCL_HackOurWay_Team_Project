@@ -1,0 +1,19 @@
+<div *ngIf="hotel">
+  <h2>{{ hotel.name }}</h2>
+  <p>{{ hotel.location }}</p>
+  <p>{{ hotel.description }}</p>
+</div>
+
+<hr>
+
+<h3>Rooms</h3>
+
+<div *ngFor="let room of rooms" class="card">
+  <p>Category: {{ room.category }}</p>
+  <p>Price: ₹{{ room.price }}</p>
+  <p>Available: {{ room.availability }}</p>
+
+  <button [routerLink]="['/booking']" [queryParams]="{ roomId: room.id }">
+    Book Now
+  </button>
+</div>
