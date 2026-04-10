@@ -12,7 +12,12 @@
   <p>Check-In: {{ booking.checkIn | date }}</p>
   <p>Check-Out: {{ booking.checkOut | date }}</p>
   <p>Total Price: ₹{{ booking.totalPrice }}</p>
-  <p>Status: {{ booking.status }}</p>
+  <p [ngClass]="{
+  'status-confirmed': booking.status === 'Confirmed',
+  'status-cancelled': booking.status === 'Cancelled'
+}">
+  Status: {{ booking.status }}
+</p>
 
   <button 
     (click)="cancelBooking(booking.id)" 

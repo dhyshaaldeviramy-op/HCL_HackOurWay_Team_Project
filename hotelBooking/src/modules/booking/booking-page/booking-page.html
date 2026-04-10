@@ -1,24 +1,24 @@
-<h2>Book Room</h2>
+<div class="container">
 
-<div *ngIf="room">
-  <h3>{{ room.category }}</h3>
-  <p>Price per day: ₹{{ room.price }}</p>
+  <h2>Book Room</h2>
+
+  <div *ngIf="room" class="room-box">
+    <h3>{{ room.category }}</h3>
+    <p>Price per day: ₹{{ room.price }}</p>
+  </div>
+
+  <hr>
+
+  <label>Check-In:</label>
+  <input type="date" [(ngModel)]="checkIn" (change)="calculatePrice()" />
+
+  <label>Check-Out:</label>
+  <input type="date" [(ngModel)]="checkOut" (change)="calculatePrice()" />
+
+  <h3 class="total-price">Total Price: ₹{{ totalPrice }}</h3>
+
+  <button (click)="bookNow()" [disabled]="!checkIn || !checkOut">
+    Confirm Booking
+  </button>
+
 </div>
-
-<hr>
-
-<label>Check-In:</label>
-<input type="date" [(ngModel)]="checkIn" (change)="calculatePrice()" />
-
-<br><br>
-
-<label>Check-Out:</label>
-<input type="date" [(ngModel)]="checkOut" (change)="calculatePrice()" />
-
-<br><br>
-
-<h3>Total Price: ₹{{ totalPrice }}</h3>
-
-<button (click)="bookNow()" [disabled]="!checkIn || !checkOut">
-  Confirm Booking
-</button>
