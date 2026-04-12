@@ -15,18 +15,13 @@ namespace HotelBooking.Services.Implementations
             _context = context;
         }
 
-        public async Task<string> CreateBookingAsync(int userId, CreateBookingDTO dto)
+        public async Task<int> CreateBookingAsync(int userId, CreateBookingDTO dto)
         {
-            var room = await _context.Rooms
-                .FirstOrDefaultAsync(r => r.RoomId == dto.RoomId);
-
-            if (room == null)
-                throw new Exception("Room not found");
+            var room = await _context.Rooms.FirstOrDefaultAsync(r => r.RoomId == dto.RoomId);
+            if (room == null) throw new Exception("Room not found");
 
             int totalDays = (dto.CheckOut - dto.CheckIn).Days;
-
-            if (totalDays <= 0)
-                throw new Exception("Invalid booking dates");
+            if (totalDays <= 0) throw new Exception("Invalid booking dates");
 
             var booking = new Booking
             {
@@ -41,7 +36,7 @@ namespace HotelBooking.Services.Implementations
             _context.Bookings.Add(booking);
             await _context.SaveChangesAsync();
 
-            return "Booking Created Successfully";
+            return booking.BookingId;  // ← return id not string
         }
 
         public async Task<List<BookingDTO>> GetBookingsByUserAsync(int userId)
@@ -58,6 +53,24 @@ namespace HotelBooking.Services.Implementations
                     Status = b.Status
                 })
                 .ToListAsync();
+        }
+
+        // Issue 5 fix: cancel implementation
+        public async Task<string> CancelBookingAsync(int bookingId)
+        {
+            var booking = await _context.Bookings
+                .FirstOrDefaultAsync(b => b.BookingId == bookingId);
+
+            if (booking == null)
+                throw new Exception("Booking not found");
+
+            if (booking.Status == "Cancelled")
+                throw new Exception("Booking is already cancelled");
+
+            booking.Status = "Cancelled";
+            await _context.SaveChangesAsync();
+
+            return "Booking Cancelled Successfully";
         }
     }
 }

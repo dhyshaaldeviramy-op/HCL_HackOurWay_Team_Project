@@ -1,5 +1,6 @@
 ﻿using HotelBooking.Data;
 using HotelBooking.DTO;
+using HotelBooking.DTO.HotelBooking.DTO;
 using HotelBooking.Model;
 using HotelBooking.Services.Interfaces;
 using Microsoft.EntityFrameworkCore;
@@ -27,14 +28,12 @@ namespace HotelBooking.Services.Implementations
             {
                 BookingId = dto.BookingId,
                 Amount = dto.Amount,
-                Method = dto.Method,
+                Method = dto.Method ?? "Online",   // ← handle null
                 Status = "Paid"
             };
 
             _context.Payments.Add(payment);
-
             booking.Status = "Paid";
-
             await _context.SaveChangesAsync();
 
             return "Payment Successful";

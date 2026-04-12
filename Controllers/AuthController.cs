@@ -1,32 +1,50 @@
-﻿using HotelBooking.DTO;
+﻿
+using HotelBooking.DTO;
 using HotelBooking.Services.Interfaces;
 using Microsoft.AspNetCore.Mvc;
 
-namespace HotelBooking.Controllers
+namespace BuisnessWebsite.Controller
 {
+
     [ApiController]
     [Route("api/[controller]")]
     public class AuthController : ControllerBase
     {
-        private readonly IAuthService _authService;
+        private readonly IAuthService _service;
 
-        public AuthController(IAuthService authService)
+        public AuthController(IAuthService service)
         {
-            _authService = authService;
+            _service = service;
         }
 
+        //POST api/auth/register
         [HttpPost("register")]
-        public async Task<IActionResult> Register(RegisterDTO dto)
+        public async Task<IActionResult> Register([FromBody] RegisterDTO dto)
         {
-            var result = await _authService.RegisterAsync(dto);
-            return Ok(result);
+            try
+            {
+                var result = await _service.RegisterAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return BadRequest(new { message = ex.Message });
+            }
         }
 
+        // POST api/auth/login
         [HttpPost("login")]
-        public async Task<IActionResult> Login(LoginDTO dto)
+        public async Task<IActionResult> Login([FromBody] LoginDTO dto)
         {
-            var result = await _authService.LoginAsync(dto);
-            return Ok(result);
+            try
+            {
+                var result = await _service.LoginAsync(dto);
+                return Ok(result);
+            }
+            catch (Exception ex)
+            {
+                return Unauthorized(new { message = ex.Message });
+            }
         }
     }
 }

@@ -24,7 +24,8 @@ namespace HotelBooking.Services.Implementations
                     Id = r.RoomId,
                     HotelId = r.HotelId,
                     Category = r.Category,
-                    Price = r.Price
+                    Price = r.Price,
+                    Availability = int.Parse(r.Availabilty ?? "0")  // ← ADDED
                 })
                 .ToListAsync();
         }
@@ -42,7 +43,7 @@ namespace HotelBooking.Services.Implementations
                 HotelId = dto.HotelId,
                 Category = dto.Category,
                 Price = dto.Price,
-                Availabilty = dto.Availability.ToString()
+                Availabilty = dto.Availability.ToString()  
             };
 
             _context.Rooms.Add(room);
