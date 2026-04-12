@@ -1,17 +1,16 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { HotelService } from '../../../core/services/hotel-service';
 import { Router } from '@angular/router';
-import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-hotel-list',
-  imports: [FormsModule,CommonModule],
+  imports: [CommonModule],
   templateUrl: './hotel-list.html',
   styleUrl: './hotel-list.css',
 })
-export class HotelList {
-hotels: any[] = [];
+export class HotelList implements OnInit {
+  hotels = signal<any[]>([]);   // ← changed to signal
 
   constructor(
     private hotelService: HotelService,
@@ -23,8 +22,12 @@ hotels: any[] = [];
   }
 
   loadHotels() {
-    this.hotelService.getHotels().subscribe((res: any) => {
-      this.hotels = res;
+    this.hotelService.getHotels().subscribe({
+      next: (res: any) => {
+        this.hotels.set(res);   // ← use .set()
+        console.log('hotels:', res);
+      },
+      error: (err) => console.error('Error:', err)
     });
   }
 

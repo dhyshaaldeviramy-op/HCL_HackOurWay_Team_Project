@@ -1,47 +1,43 @@
-import { Component, inject, NgModule } from '@angular/core';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { PaymentDTO } from '../../../models/paymentdto';
 import { PaymentService } from '../../../core/services/payment';
-import { FormsModule, NgModel } from '@angular/forms';
-import { NgClass } from '@angular/common';
+import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-payment',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './payment.html',
   styleUrl: './payment.css',
 })
-export class PaymentComponent {
-   payment: PaymentDTO = {
-    bookingId: 0,
-    amount: 0
-  };
+export class PaymentComponent implements OnInit {
+  private route          = inject(ActivatedRoute);
+  private router         = inject(Router);
+  private paymentservice = inject(PaymentService);
 
-  fetchedPayment?: PaymentDTO;
+  payment: PaymentDTO = { bookingId: 0, amount: 0, method: 'Online' };  // ← add method
   message = '';
+  paid = false;
 
- private paymentservice = inject(PaymentService);
-
- submitPayment() {
-    this.paymentservice.sendPayment(this.payment).subscribe({
-      next: (res:any) => {
-        this.message = 'Payment Successful ';
-        this.payment = { bookingId: 0, amount: 0 };
-      },
-      error: () => {
-        this.message = 'Payment Failed ';
-      }
-    });
+  ngOnInit(): void {
+    const bookingId = Number(this.route.snapshot.queryParamMap.get('bookingId'));
+    const amount    = Number(this.route.snapshot.queryParamMap.get('amount'));
+    if (bookingId) this.payment.bookingId = bookingId;
+    if (amount)    this.payment.amount    = amount;
   }
 
-  
-  getPayment() {
-    this.paymentservice.getPaymentById(this.payment.bookingId).subscribe({
-      next: (res:any) => {
-        this.fetchedPayment = res;
-      },
-      error: () => {
-        this.message = 'Payment not found ';
-      }
-    });
-  }
+submitPayment() {
+  this.paymentservice.sendPayment(this.payment).subscribe({
+    next: () => {
+      this.message = '✅ Payment Successful! Redirecting...';
+      this.paid = true;
+      setTimeout(() => this.router.navigate(['/my-bookings']), 3000);
+    },
+    error: (err) => {
+      console.error('Payment error:', err);
+      this.message = '❌ Payment Failed. Please try again.';
+    }
+  });
+}
 }

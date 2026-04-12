@@ -35,7 +35,7 @@ export class Login {
         if (this.auth.isAdmin()) {
           this.router.navigate(['/admin/dashboard']);
         } else {
-          this.router.navigate(['/messages']);
+          this.router.navigate(['/hotels']);
         }
       },
       error: () => {

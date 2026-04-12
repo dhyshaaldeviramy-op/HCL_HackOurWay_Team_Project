@@ -1,28 +1,14 @@
 import { CommonModule } from '@angular/common';
-import { Component } from '@angular/core';
-import { FormsModule } from '@angular/forms';
-import { Router } from '@angular/router';
+import { Component, inject } from '@angular/core';
+import { RouterLink } from '@angular/router';          // ← add RouterLink
+import { Authservice } from '../../../core/services/authservice';
 
 @Component({
   selector: 'app-navbar',
-  imports: [FormsModule,CommonModule],
+  imports: [CommonModule, RouterLink],                 // ← replace FormsModule with RouterLink
   templateUrl: './navbar.html',
   styleUrl: './navbar.css',
 })
 export class Navbar {
-
-  constructor(private router: Router) {}
-
-  goHome() {
-    this.router.navigate(['/']);
-  }
-
-  goBookings() {
-    this.router.navigate(['/my-bookings']);
-  }
-
-  logout() {
-    localStorage.removeItem('token');
-    this.router.navigate(['/login']);
-  }
+  auth = inject(Authservice);
 }

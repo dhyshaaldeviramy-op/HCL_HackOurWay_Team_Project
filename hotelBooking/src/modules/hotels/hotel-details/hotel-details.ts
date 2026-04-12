@@ -1,25 +1,24 @@
-import { Component } from '@angular/core';
+import { Component, OnInit, signal } from '@angular/core';
 import { HotelService } from '../../../core/services/hotel-service';
 import { RoomService } from '../../../core/services/room-service';
-import { ActivatedRoute } from '@angular/router';
-import { FormsModule } from '@angular/forms';
+import { ActivatedRoute, Router } from '@angular/router';
 import { CommonModule } from '@angular/common';
-import { RouterModule } from '@angular/router';
 
 @Component({
   selector: 'app-hotel-details',
-  imports: [FormsModule,CommonModule,RouterModule],
+  imports: [CommonModule],
   templateUrl: './hotel-details.html',
   styleUrl: './hotel-details.css',
 })
-export class HotelDetails {
+export class HotelDetails implements OnInit {
 
   hotelId!: number;
-  hotel: any;
-  rooms: any[] = [];
+  hotel = signal<any>(null);
+  rooms = signal<any[]>([]);
 
   constructor(
     private route: ActivatedRoute,
+    private router: Router,
     private hotelService: HotelService,
     private roomService: RoomService
   ) {}
@@ -31,14 +30,26 @@ export class HotelDetails {
   }
 
   loadHotel() {
-    this.hotelService.getHotelById(this.hotelId).subscribe((res: any) => {
-      this.hotel = res;
+    this.hotelService.getHotelById(this.hotelId).subscribe({
+      next: (res: any) => this.hotel.set(res),
+      error: (err) => console.error('hotel error:', err)
     });
   }
 
   loadRooms() {
-    this.roomService.getRoomsByHotel(this.hotelId).subscribe((res: any) => {
-      this.rooms = res;
+    this.roomService.getRoomsByHotel(this.hotelId).subscribe({
+      next: (res: any) => {
+        this.rooms.set(res);
+        console.log('rooms loaded:', res);
+      },
+      error: (err) => console.error('rooms error:', err)
+    });
+  }
+
+  bookRoom(room: any) {
+    this.router.navigate(['/booking'], {
+      queryParams: { roomId: room.id },
+      state: { category: room.category, price: room.price }
     });
   }
 }

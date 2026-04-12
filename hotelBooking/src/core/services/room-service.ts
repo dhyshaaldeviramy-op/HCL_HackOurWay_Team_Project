@@ -6,19 +6,14 @@ import { environment } from '../../app/Environment/environment';
   providedIn: 'root',
 })
 export class RoomService {
-  
 
   constructor(private http: HttpClient) {}
 
-  // Get rooms by hotel
   getRoomsByHotel(hotelId: number) {
-    return this.http.get(`${environment.apiUrl}/Room/by-hotel/${hotelId}/rooms`);
+    return this.http.get(`${environment.apiUrl}/Room/by-hotel/${hotelId}`); // ← removed /rooms
   }
 
-  // Add new room
   addRoom(data: any) {
-    return this.http.post(`${environment.apiUrl}/Room`, data);
+    return this.http.post(`${environment.apiUrl}/Room`, data, { responseType: 'text' }); // ← added responseType
   }
-
- 
 }

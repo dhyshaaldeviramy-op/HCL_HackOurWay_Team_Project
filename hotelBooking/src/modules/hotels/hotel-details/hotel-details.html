@@ -1,19 +1,24 @@
-<div *ngIf="hotel" class="hotel-box">
-  <h2>{{ hotel.name }}</h2>
-  <p>{{ hotel.location }}</p>
-  <p>{{ hotel.description }}</p>
-</div>
+<div class="container">
 
-<hr>
+  <div *ngIf="hotel()" class="hotel-box">
+    <h2>{{ hotel().name }}</h2>
+    <p>📍 {{ hotel().location }}</p>
+    <p>{{ hotel().description }}</p>
+  </div>
 
-<h3>Rooms</h3>
+  <hr>
 
-<div *ngFor="let room of rooms" class="card">
-  <p><b>Category:</b> {{ room.category }}</p>
-  <p><b>Price:</b> ₹{{ room.price }}</p>
-  <p><b>Available:</b> {{ room.availability }}</p>
+  <h3>Rooms</h3>
 
-  <button [routerLink]="['/booking']" [queryParams]="{ roomId: room.id }">
-    Book Now
-  </button>
+  <p *ngIf="rooms().length === 0">No rooms available.</p>
+
+  <div *ngFor="let room of rooms()" class="card">
+    <p><b>Category:</b> {{ room.category }}</p>
+    <p><b>Price:</b> ₹{{ room.price }} / night</p>
+    <p><b>Available:</b> {{ room.availability }}</p>
+    <button (click)="bookRoom(room)" [disabled]="room.availability === 0">
+      {{ room.availability > 0 ? 'Book Now' : 'Not Available' }}
+    </button>
+  </div>
+
 </div>

@@ -73,3 +73,6 @@ button:hover {
   color: red;
   font-weight: bold;
 }
+.status-confirmed { color: green;  font-weight: bold; }
+.status-cancelled { color: red;    font-weight: bold; }
+.status-paid      { color: blue;   font-weight: bold; }

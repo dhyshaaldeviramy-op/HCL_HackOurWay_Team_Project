@@ -1,19 +1,18 @@
-<nav style="background:#333; padding:10px; color:white;">
+<nav class="navbar">
+  <span class="brand" routerLink="/hotels">🏨 Hotel Booking</span>
 
-  <span style="font-size:20px; cursor:pointer;" (click)="goHome()">
-    🏨 Hotel Booking
-  </span>
+  <div class="nav-links">
+    <a routerLink="/hotels">Home</a>
 
-  <span style="margin-left:20px; cursor:pointer;" (click)="goHome()">
-    Home
-  </span>
+    <ng-container *ngIf="auth.isLoggedIn()">
+      <a routerLink="/my-bookings">My Bookings</a>
+      <a *ngIf="auth.isAdmin()" routerLink="/admin/dashboard">Admin</a>
+      <span class="logout" (click)="auth.logout()">Logout</span>
+    </ng-container>
 
-  <span style="margin-left:20px; cursor:pointer;" (click)="goBookings()">
-    My Bookings
-  </span>
-
-  <span style="float:right; cursor:pointer;" (click)="logout()">
-    Logout
-  </span>
-
+    <ng-container *ngIf="!auth.isLoggedIn()">
+      <a routerLink="/login">Login</a>
+      <a routerLink="/register">Register</a>
+    </ng-container>
+  </div>
 </nav>

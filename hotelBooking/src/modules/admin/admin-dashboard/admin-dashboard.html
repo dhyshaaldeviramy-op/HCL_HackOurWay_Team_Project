@@ -1,0 +1,61 @@
+<div class="admin-container">
+  <h2>Admin Dashboard</h2>
+
+  <div class="tabs">
+    <button [class.active]="activeTab() === 'hotels'" (click)="setTab('hotels')">Hotels</button>
+    <button [class.active]="activeTab() === 'rooms'"  (click)="setTab('rooms')">Rooms</button>
+  </div>
+
+  <!-- HOTELS TAB -->
+  <div *ngIf="activeTab() === 'hotels'">
+    <h3>Add Hotel</h3>
+    <form [formGroup]="hotelForm" (ngSubmit)="addHotel()">
+      <input formControlName="name"        placeholder="Hotel Name" />
+      <input formControlName="location"    placeholder="Location" />
+      <input formControlName="description" placeholder="Description (optional)" />
+      <button type="submit">Add Hotel</button>
+    </form>
+    <p class="success" *ngIf="hotelMsg()">{{ hotelMsg() }}</p>
+    <p class="error"   *ngIf="hotelErrMsg()">{{ hotelErrMsg() }}</p>
+
+    <h3>All Hotels</h3>
+    <table *ngIf="hotels().length > 0">
+      <thead><tr><th>ID</th><th>Name</th><th>Location</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let h of hotels()">
+          <td>{{ h.id }}</td>
+          <td>{{ h.name }}</td>
+          <td>{{ h.location }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="hotels().length === 0">No hotels found.</p>
+  </div>
+
+  <!-- ROOMS TAB -->
+  <div *ngIf="activeTab() === 'rooms'">
+    <h3>Add Room</h3>
+    <form [formGroup]="roomForm" (ngSubmit)="addRoom()">
+      <input formControlName="hotelId"      placeholder="Hotel ID" type="number" (change)="loadRooms()" />
+      <input formControlName="category"     placeholder="Category (e.g. Deluxe)" />
+      <input formControlName="price"        placeholder="Price per night" type="number" />
+      <input formControlName="availability" placeholder="Available rooms" type="number" />
+      <button type="submit">Add Room</button>
+    </form>
+    <p class="success" *ngIf="roomMsg()">{{ roomMsg() }}</p>
+    <p class="error"   *ngIf="roomErrMsg()">{{ roomErrMsg() }}</p>
+
+    <h3>Rooms for selected Hotel</h3>
+    <table *ngIf="rooms().length > 0">
+      <thead><tr><th>ID</th><th>Category</th><th>Price</th></tr></thead>
+      <tbody>
+        <tr *ngFor="let r of rooms()">
+          <td>{{ r.id }}</td>
+          <td>{{ r.category }}</td>
+          <td>{{ r.price }}</td>
+        </tr>
+      </tbody>
+    </table>
+    <p *ngIf="rooms().length === 0">No rooms found. Enter a Hotel ID above.</p>
+  </div>
+</div>

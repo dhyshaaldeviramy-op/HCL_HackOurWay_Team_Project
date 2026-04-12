@@ -10,17 +10,15 @@ export class BookingService {
   constructor(private http: HttpClient) {}
 
   // Create booking
-  createBooking(data: any) {
-    return this.http.post(`${environment.apiUrl}/Booking`, data);
-  }
+createBooking(data: any) {
+  return this.http.post<number>(`${environment.apiUrl}/Booking`, data); 
+}
 
+cancelBooking(id: number) {
+  return this.http.put(`${environment.apiUrl}/Booking/cancel/${id}`, {}, { responseType: 'text' });
+}
   // Get bookings by user
   getUserBookings(userId: number) {
     return this.http.get(`${environment.apiUrl}/Booking/user/${userId}`);
-  }
-
-  // Cancel booking
-  cancelBooking(id: number) {
-    return this.http.put(`${environment.apiUrl}/Booking/cancel/${id}`, {});
   }
 }

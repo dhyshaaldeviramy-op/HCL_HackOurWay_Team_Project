@@ -7,15 +7,16 @@ import { PaymentDTO } from '../../models/paymentdto';
   providedIn: 'root',
 })
 export class PaymentService {
+
+  private http = inject(HttpClient);
+
+  getPaymentById(id: number) {
+    return this.http.get<PaymentDTO>(`${environment.apiUrl}/Payment/${id}`);
+  }
+
  
-   private http = inject(HttpClient);
-
- getPaymentById(id: number) {
-    return this.http.get<PaymentDTO>(`${environment.apiUrl}/payments/${id}`);
-  }
-
-  
-  sendPayment(payment: PaymentDTO) {
-    return this.http.post<PaymentDTO>(`${environment.apiUrl}/payments`, payment);
-  }
+ sendPayment(payment: PaymentDTO) {
+  return this.http.post(
+    `${environment.apiUrl}/Payment`, payment, { responseType: 'text' } );
+}
 }

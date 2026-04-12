@@ -1,26 +1,30 @@
-<p>payment works!</p>
 <div class="payment-container">
-  <h2>Payment Form</h2>
+  <h2>Complete Payment</h2>
+
+  <div class="summary">
+    <p><b>Booking ID:</b> {{ payment.bookingId }}</p>
+    <p><b>Amount to Pay:</b> ₹{{ payment.amount }}</p>
+  </div>
 
   <form (ngSubmit)="submitPayment()">
     <label>Booking ID</label>
-    <input type="number" [(ngModel)]="payment.bookingId" name="bookingId" required>
+    <input type="number" [(ngModel)]="payment.bookingId" name="bookingId" required />
 
-    <label>Amount</label>
-    <input type="number" [(ngModel)]="payment.amount" name="amount" required>
+    <label>Amount (₹)</label>
+    <input type="number" [(ngModel)]="payment.amount" name="amount" required />
 
-    <button type="submit">Pay Now</button>
+    <label>Payment Method</label>
+    <select [(ngModel)]="payment.method" name="method">
+      <option value="Online">Online</option>
+      <option value="Card">Card</option>
+      <option value="UPI">UPI</option>
+      <option value="Cash">Cash</option>
+    </select>
+
+    <button type="submit" [disabled]="paid">
+      {{ paid ? 'Paid ✅' : 'Pay Now' }}
+    </button>
   </form>
 
-  <button class="fetch-btn" (click)="getPayment()">Get Payment Details</button>
-
-  <p class="message">{{ message }}</p>
-
- @if (fetchedPayment; as payment) {
-  <div class="result">
-    <h3>Payment Details</h3>
-    <p><strong>Booking ID:</strong> {{ payment.bookingId }}</p>
-    <p><strong>Amount:</strong> ₹{{ payment.amount }}</p>
-  </div>
-}
+  <p class="message" *ngIf="message">{{ message }}</p>
 </div>

@@ -1,12 +1,9 @@
-<div class="container">
-  <h2>Hotels</h2>
+<h2>Hotels</h2>
 
-  <div *ngFor="let hotel of hotels" class="card">
+<div class="container">
+  <div *ngFor="let hotel of hotels()" class="card">
     <h3>{{ hotel.name }}</h3>
     <p>{{ hotel.location }}</p>
-
-    <button (click)="viewDetails(hotel.id)">
-      View Details
-    </button>
+    <button (click)="viewDetails(hotel.id)">View Details</button>
   </div>
 </div>

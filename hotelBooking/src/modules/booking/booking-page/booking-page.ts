@@ -1,70 +1,70 @@
-import { Component } from '@angular/core';
-import { ActivatedRoute } from '@angular/router';
+import { Component, OnInit, inject } from '@angular/core';
+import { ActivatedRoute, Router } from '@angular/router';
 import { BookingService } from '../../../core/services/booking-service';
-import { RoomService } from '../../../core/services/room-service';
+import { Authservice } from '../../../core/services/authservice';
 import { FormsModule } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-booking-page',
-  imports: [FormsModule,CommonModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './booking-page.html',
   styleUrl: './booking-page.css',
 })
-export class BookingPage {
+export class BookingPage implements OnInit {
+  private route   = inject(ActivatedRoute);
+  private router  = inject(Router);
+  private booking = inject(BookingService);
+  private auth    = inject(Authservice);
 
   roomId!: number;
-  room: any;
-
+  room: any = null;        // ← added back
   checkIn!: string;
   checkOut!: string;
   totalPrice: number = 0;
-
-  userId: number = 1; // 🔥 TEMP (replace later with logged user)
-
-  constructor(
-    private route: ActivatedRoute,
-    private bookingService: BookingService,
-    private roomService: RoomService
-  ) {}
+  message = '';
 
   ngOnInit(): void {
     this.roomId = Number(this.route.snapshot.queryParamMap.get('roomId'));
-    this.loadRoom();
-  }
-
-  loadRoom() {
-    this.roomService.getRoomsByHotel(0) // fallback not needed, just for safety
-    this.roomService.getRoomsByHotel(this.roomId).subscribe((res: any) => {
-      // If your API doesn't support single room, ignore this part
-      this.room = res[0];
-    });
-  }
-
-  calculatePrice() {
-    if (this.checkIn && this.checkOut && this.room) {
-      const start = new Date(this.checkIn);
-      const end = new Date(this.checkOut);
-
-      const days = Math.ceil(
-        (end.getTime() - start.getTime()) / (1000 * 60 * 60 * 24)
-      );
-
-      this.totalPrice = days * this.room.price;
+    // room details passed via navigation state from hotel-details
+    const nav = history.state;
+    if (nav?.category) {
+      this.room = nav;     // ← get room from navigation state
     }
   }
 
-  bookNow() {
-    const data = {
-      userId: this.userId,
-      roomId: this.roomId,
-      checkIn: this.checkIn,
-      checkOut: this.checkOut,
-      totalPrice: this.totalPrice
-    };
-
-    this.bookingService.createBooking(data).subscribe(() => {
-      alert('Booking Successful!');
-    });
+  calculatePrice() {
+    if (this.checkIn && this.checkOut && this.room?.price) {
+      const days = Math.ceil(
+        (new Date(this.checkOut).getTime() - new Date(this.checkIn).getTime())
+        / (1000 * 60 * 60 * 24)
+      );
+      this.totalPrice = days > 0 ? days * this.room.price : 0;
+    }
   }
+
+ bookNow() {
+  if (!this.checkIn || !this.checkOut) return;
+
+  const data = {
+    roomId:   this.roomId,
+    checkIn:  this.checkIn,
+    checkOut: this.checkOut
+  };
+
+  this.booking.createBooking(data).subscribe({
+    next: (bookingId: any) => {
+      this.message = '✅ Booking Successful!';
+      setTimeout(() => {
+        this.router.navigate(['/payment'], {
+          queryParams: {
+            bookingId: bookingId,
+            amount: this.totalPrice
+          }
+        });
+      }, 1000);
+    },
+    error: () => this.message = '❌ Booking failed. Please try again.'
+  });
+}
 }

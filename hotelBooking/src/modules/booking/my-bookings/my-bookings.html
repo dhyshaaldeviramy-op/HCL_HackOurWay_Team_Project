@@ -1,8 +1,27 @@
 <h2>My Bookings</h2>
 
-<div *ngIf="bookings.length === 0">
-  <p>No bookings found</p>
-</div>
+<p *ngIf="bookings.length === 0">No bookings found.</p>
+
+<div *ngFor="let booking of bookings" class="card">
+  <h4>Booking ID: {{ booking.id }}</h4>
+  <p>Room ID: {{ booking.roomId }}</p>
+  <p>Check-In: {{ booking.checkIn | date }}</p>
+  <p>Check-Out: {{ booking.checkOut | date }}</p>
+  <p>Total Price: ₹{{ booking.price }}</p>    <!-- ← totalPrice → price -->
+  <p [ngClass]="{
+    'status-confirmed': booking.status === 'Confirmed',
+    'status-cancelled': booking.status === 'Cancelled',
+    'status-paid': booking.status === 'Paid'
+  }">Status: {{ booking.status }}</p>
+
+  <button
+    (click)="cancelBooking(booking.id)"
+    *ngIf="booking.status !== 'Cancelled' && booking.status !== 'Paid'">
+    Cancel Booking
+  </button>
+</div><h2>My Bookings</h2>
+
+<p *ngIf="bookings.length === 0">No bookings found.</p>
 
 <div *ngFor="let booking of bookings" class="card">
 
@@ -11,18 +30,19 @@
   <p>Room ID: {{ booking.roomId }}</p>
   <p>Check-In: {{ booking.checkIn | date }}</p>
   <p>Check-Out: {{ booking.checkOut | date }}</p>
-  <p>Total Price: ₹{{ booking.totalPrice }}</p>
-  <p [ngClass]="{
-  'status-confirmed': booking.status === 'Confirmed',
-  'status-cancelled': booking.status === 'Cancelled'
-}">
-  Status: {{ booking.status }}
-</p>
+  <p>Total Price: ₹{{ booking.price }}</p>   
 
-  <button 
-    (click)="cancelBooking(booking.id)" 
-    *ngIf="booking.status !== 'Cancelled'">
-    
+  <p [ngClass]="{
+    'status-confirmed': booking.status === 'Confirmed',
+    'status-cancelled': booking.status === 'Cancelled',
+    'status-paid':      booking.status === 'Paid'
+  }">
+    Status: {{ booking.status }}
+  </p>
+
+  <button
+    (click)="cancelBooking(booking.id)"
+    *ngIf="booking.status === 'Confirmed'">
     Cancel Booking
   </button>
 
